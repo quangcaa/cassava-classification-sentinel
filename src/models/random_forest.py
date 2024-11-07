@@ -9,21 +9,20 @@ train_data = pd.read_csv('data/train/train_data.csv')
 test_data = pd.read_csv('data/test/test_data.csv')
 
 # define feature & target
-feature_columns = ['long', 'lat', 'rgb_band_1', 'rgb_band_2', 'rgb_band_3', 'ndvi_band_1']
+feature_columns = ['long', 'lat', 'B4', 'B3', 'B2', 'B8', 'B11', 'B12', 'NDVI', 'EVI', 'SAVI', 'NDWI', 'NBR', 'CIgreen']
 target_column = 'label'
 
-# training data
+# set up
 X_train = train_data[feature_columns]
 y_train = train_data[target_column]
 
-# test data
 X_test = test_data[feature_columns]
 y_test = test_data[target_column]
 
 # init: Random Forest classifier
 clf = RandomForestClassifier(random_state=42)
 
-# Định nghĩa bộ tham số cần thử nghiệm
+# determine params 
 param_grid = {
     'n_estimators': [100, 200, 300, 500],
     'max_depth': [10, 20, 30, None],
@@ -33,7 +32,7 @@ param_grid = {
     'class_weight': ['balanced', None]
 }
 
-# khởi tạo GridSearchCV vs cv=5
+# init GridSearchCV vs cv=5
 grid_search = GridSearchCV(estimator=clf, param_grid=param_grid, cv=5, n_jobs=-1, scoring='accuracy')
 
 # start time

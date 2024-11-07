@@ -18,46 +18,36 @@ gdf = gpd.GeoDataFrame(
 )
 
 # sentinel tif path
-rgb_path = "data/tif/Sentinel2_TanHoi_RGB.tif"
-ndvi_path = "data/tif/Sentinel2_TanHoi_NDVI.tif"
+sentinel_path = "data/tif/TanHoi_final.tif"
+band_names = ['B4', 'B3', 'B2', 'B8', 'B11', 'B12', 'NDVI', 'EVI', 'SAVI', 'NDWI', 'NBR', 'CIgreen']
 
 # open rgb
-with rasterio.open(rgb_path) as src_rgb:
+with rasterio.open(sentinel_path) as src:
     # transform to CRS
-    gdf = gdf.to_crs(src_rgb.crs)
+    gdf = gdf.to_crs(src.crs)
+
+    # create list for training data
+    training_data = []
     
-    # open ndvi
-    with rasterio.open(ndvi_path) as src_ndvi:
-        # check CRS === rgb
-        assert src_ndvi.crs == src_rgb.crs, "CRS of RGB and NDVI images do not match"
-         
-        print(f"Number of bands in RGB image: {src_rgb.count}")
+    # Duyệt qua từng điểm và lấy giá trị pixel tương ứng từ ảnh vệ tinh
+    for idx, row in gdf.iterrows():
+        point = row.geometry  # lấy tọa độ điểm (long, lat)
+
+        # Tìm chỉ số hàng và cột của pixel tương ứng với tọa độ điểm
+        row_idx, col_idx = src.index(point.x, point.y)
         
-        # create list for training data
-        training_data = []
+        # Đọc giá trị pixel cho tất cả các băng phổ và chỉ số tại vị trí này
+        pixel_values = src.read(window=((row_idx, row_idx+1), (col_idx, col_idx+1))).flatten()
+        
+        # Lưu trữ các giá trị pixel cùng với nhãn và tọa độ
+        training_data.append({
+            'long': point.x,
+            'lat': point.y,
+            'label': row['label'],  # gán nhãn cho sắn hoặc không sắn
+            **{band_names[i]: pixel_values[i] for i in range(len(pixel_values))}
+        })
 
-        # iterate through each point in gdf and get the corresponding pixel values
-        for idx, row in gdf.iterrows():
-            point = row.geometry  # get the point (coordinates)
-
-            # get row, column indices of the pixel corresponding to the coordinates
-            row_idx_rgb, col_idx_rgb = src_rgb.index(point.x, point.y)
-            row_idx_ndvi, col_idx_ndvi = src_ndvi.index(point.x, point.y)
-            
-            # read the pixel values at this location for all bands
-            pixel_values_rgb = src_rgb.read([1, 2, 3], window=((row_idx_rgb, row_idx_rgb+1), (col_idx_rgb, col_idx_rgb+1))).flatten()
-            pixel_values_ndvi = src_ndvi.read(1, window=((row_idx_ndvi, row_idx_ndvi+1), (col_idx_ndvi, col_idx_ndvi+1))).flatten()
-            
-            # store the pixel values along with coordinates and label
-            training_data.append({
-                'long': point.x,
-                'lat': point.y,
-                'label': row['label'],
-                **{f'rgb_band_{i+1}': pixel_values_rgb[i] for i in range(len(pixel_values_rgb))},
-                **{f'ndvi_band_{i+1}': pixel_values_ndvi[i] for i in range(len(pixel_values_ndvi))}
-            })
-
-# create DataFrame from the training data
+# create df from training_data
 df_training = pd.DataFrame(training_data)
 
 # split training (80%) , test (20%)
