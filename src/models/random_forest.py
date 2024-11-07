@@ -5,8 +5,8 @@ from sklearn.model_selection import GridSearchCV
 import time 
 
 # load training data
-train_data = pd.read_csv('train_data/train_data.csv')
-test_data = pd.read_csv('train_data/test_data.csv')
+train_data = pd.read_csv('data/train/train_data.csv')
+test_data = pd.read_csv('data/test/test_data.csv')
 
 # define feature & target
 feature_columns = ['long', 'lat', 'rgb_band_1', 'rgb_band_2', 'rgb_band_3', 'ndvi_band_1']

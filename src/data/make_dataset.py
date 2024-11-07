@@ -4,8 +4,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 # load san and non-san data
-san_data = pd.read_csv('data/07_11_san_dat_fixed.csv')
-non_san_data = pd.read_csv('data/07_11_non_san_dat_fixed.csv')
+san_data = pd.read_csv('data/processed/07_11_san_dat_fixed.csv')
+non_san_data = pd.read_csv('data/processed/07_11_non_san_dat_fixed.csv')
 
 # combine
 data = pd.concat([san_data, non_san_data], ignore_index=True)
@@ -18,8 +18,8 @@ gdf = gpd.GeoDataFrame(
 )
 
 # sentinel tif path
-rgb_path = "tif/Sentinel2_TanHoi_RGB.tif"
-ndvi_path = "tif/Sentinel2_TanHoi_NDVI.tif"
+rgb_path = "data/tif/Sentinel2_TanHoi_RGB.tif"
+ndvi_path = "data/tif/Sentinel2_TanHoi_NDVI.tif"
 
 # open rgb
 with rasterio.open(rgb_path) as src_rgb:
@@ -70,7 +70,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 train_data = pd.concat([X_train, y_train], axis=1)
 test_data = pd.concat([X_test, y_test], axis=1)
 
-train_data.to_csv('train_data/train_data.csv', index=False)
-test_data.to_csv('train_data/test_data.csv', index=False)
+train_data.to_csv('data/train/train_data.csv', index=False)
+test_data.to_csv('data/test/test_data.csv', index=False)
 
 print("Đã tạo thành công các bộ dữ liệu: train_data.csv, test_data.csv")
