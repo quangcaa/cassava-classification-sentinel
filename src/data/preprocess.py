@@ -32,4 +32,3 @@ non_san_df['label'] = 'False'
 
 # save the modified df back to csv
 non_san_df.to_csv('data/processed/07_11_non_san_dat_fixed.csv', index=False)
-non_san_df.to_csv('07_11_non_san_dat_fixed.csv', index=False)
