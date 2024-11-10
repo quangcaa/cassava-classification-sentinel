@@ -60,3 +60,6 @@ print(f'ROC-AUC score: {roc_auc:.2f}')
 
 # print time train model
 print(f"Time taken: {end_time - start_time:.2f} seconds")
+
+best_model = grid_search.best_estimator_
+best_model.save_model('best_xgboost_model.json')
