@@ -37,15 +37,18 @@ print(classification_report(y_val, y_pred_binary))
 
 # determine params 
 param_dist = {
-    'num_leaves': randint(10, 40),            
-    'learning_rate': [0.01, 0.05, 0.1],         
-    'n_estimators': [50, 100, 200, 300],    
-    'max_depth': [3, 5, 7],                      
-    'min_child_samples': [20, 30, 40],        
+    'num_leaves': randint(10, 60),            
+    'learning_rate': [0.01, 0.05, 0.1, 0.2],         
+    'n_estimators': [50, 100, 200, 300, 500],    
+    'max_depth': [3, 5, 7, 10],              
     'subsample': [0.7, 0.8, 0.9],                
-    'colsample_bytree': [0.6, 0.7, 0.8],        
-    'reg_alpha': [0.1, 0.5, 1],                   
-    'reg_lambda': [0.1, 0.5, 1]                   
+    'colsample_bytree': [0.6, 0.7, 0.8],
+    'feature_fraction': [0.7, 0.8, 0.9],          
+    'bagging_fraction': [0.7, 0.8, 0.9],    
+    'bagging_freq': [1, 5, 10],  
+    'lambda_l1': [0.0, 0.1, 0.5],                 
+    'lambda_l2': [0.0, 0.1, 0.5],    
+    'min_data_in_leaf': [10, 20, 30],            
 }
 
 lgb_estimator = lgb.LGBMClassifier(objective='binary', metric='binary_logloss', boosting_type='gbdt', random_state=42)
