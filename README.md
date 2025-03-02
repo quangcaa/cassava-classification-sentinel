@@ -1,4 +1,4 @@
-# Cassava Mapping using Sentinel Data
+# Cassava Classification using Sentinel Data
 
 Phân loại và nhận dạng cây sắn sử dụng ảnh vệ tinh Sentinel-2B và Machine Learning.
 
